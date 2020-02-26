@@ -2,6 +2,16 @@ import { client } from '../apolloClient'
 import { nextTrackQuery, previousTrackQuery } from './query'
 import TrackPlayer from 'react-native-track-player'
 import defaultPic from './images/default.png'
+import {
+  setCurrentTrackToStore,
+  setNextAd,
+  toggleAdvertDisplay,
+  setCurrentPlayingTrackType,
+  setSongSkipCount,
+} from './redux/actions'
+import { store } from './redux/store';
+import { advertTracks } from './constants'
+
 getISODateTime = () => {
   let date = new Date();
   let userTimezoneOffset = date.getTimezoneOffset() * 60000;
@@ -27,17 +37,19 @@ export const timer = (value) => {
 }
 
 export const manageTrack = async (type) => {
-  let currentSongId = await TrackPlayer.getCurrentTrack()
+  let currentSong = store.getState().track.data
   let query = type === 'nextTrack' ? nextTrackQuery : previousTrackQuery
 
   let variables = {
     clientTime: getISODateTime(),
-    currentStreamId: currentSongId? Number(currentSongId) : null
+    currentStreamId: currentSong && currentSong.id ? Number(currentSong.id) : null
   }
 
   apiCall({ query, variables }, async (response) => {
     if (response[type]) {
       playCurrentTrack(response[type])
+      store.dispatch(setCurrentTrackToStore(response[type]))
+      store.dispatch(toggleAdvertDisplay(true))
     } else {
       console.log(response.graphQLErrors)
     }
@@ -114,5 +126,23 @@ export const trackplayerServiceCheck = async (action, ...args) => {
       }
     }
     return null
+  }
+}
+
+export const playAdvert = async () => {
+  store.dispatch(toggleAdvertDisplay(false))
+  playTrack(advertTracks.advert)
+}
+
+export const checkForAdvert = (trackType) => {
+  let { openAdvert } = store.getState().advert
+  let currentTrack = store.getState().track.data
+
+  if (trackType === 'previousTrack' && !currentTrack.isPreviousAvailable) return 0
+
+  if (openAdvert) {
+    playAdvert()
+  } else {
+    manageTrack(trackType)
   }
 }

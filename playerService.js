@@ -4,7 +4,7 @@ import {
   Platform,
 } from 'react-native';
 
-import { manageTrack } from './src/helper'
+import { checkForAdvert } from './src/helper'
 
 module.exports = async function () {
   TrackPlayer.addEventListener('remote-play', async () => {
@@ -16,11 +16,11 @@ module.exports = async function () {
   });
 
   TrackPlayer.addEventListener('remote-next', async () => {
-    manageTrack('nextTrack')
+    checkForAdvert('nextTrack')
   });
 
   TrackPlayer.addEventListener('remote-previous', async () => {
-    manageTrack('previousTrack')
+    checkForAdvert('previousTrack')
   });
 
   TrackPlayer.addEventListener('remote-stop', () => {
@@ -51,7 +51,7 @@ module.exports = async function () {
 
   TrackPlayer.addEventListener('playback-queue-ended', (data) => {
     if (data.track) {
-      manageTrack('nextTrack')
+      checkForAdvert('nextTrack')
     }
   });
 

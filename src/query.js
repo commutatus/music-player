@@ -33,6 +33,8 @@ query nextTrackQuery($clientTime: ISO8601DateTime!, $currentStreamId: Int){
 }
 `
 
+
+
 export const previousTrackQuery = gql`
 query previousTrackQuery($currentStreamId: Int!){
   previousTrack(currentStreamId: $currentStreamId){

@@ -3,10 +3,13 @@ import React from 'react';
 import {
   StyleSheet,
   View,
+  Text
 } from 'react-native';
 import { manageTrack } from './helper'
 import TrackPlayer from 'react-native-track-player'
 import PlayerController from './PlayerController'
+import { connect } from 'react-redux';
+import { setInitialStateForAdvert } from './redux/actions'
 
 class App extends React.Component {
   constructor(props) {
@@ -18,6 +21,7 @@ class App extends React.Component {
 
   componentDidMount() {
     this.setUpPlayer()
+    this.props.setInitialStateForAdvert()
     manageTrack("nextTrack")
   }
 
@@ -44,11 +48,20 @@ class App extends React.Component {
   }
 
   render() {
+    let { trackDetails, openAdvert } = this.props
     return (
       <View style={styles.container}>
+        <Text style={styles.title}>{!openAdvert ? "Advertisement" : trackDetails ? trackDetails.song.title : ''}</Text>
         <PlayerController />
       </View>
     )
+  }
+}
+
+const mapStateToProps = state => {
+  return {
+    trackDetails: state.track.data,
+    openAdvert: state.advert.openAdvert
   }
 }
 
@@ -58,7 +71,17 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     justifyContent: 'center'
+  },
+  title: {
+    alignSelf: 'center',
+    marginBottom: 20
   }
 });
 
-export default App;
+const mapDispatchToProps = {
+  setInitialStateForAdvert,
+}
+
+export default (
+  connect(mapStateToProps, mapDispatchToProps)
+)(App)
