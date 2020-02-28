@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import Slider from './Slider';
 import { timer } from './helper'
-import { manageTrack } from './helper'
+import { checkForAdvert } from './helper'
 
 async function seekTrackComplete(val) {
   await TrackPlayer.seekTo(val)
@@ -63,7 +63,7 @@ function Player(props) {
           <ProgressBar parentProps={props} />
         </View>
         <View style={styles.controls}>
-          <TouchableOpacity onPress={() => manageTrack('previousTrack')}>
+          <TouchableOpacity onPress={() => checkForAdvert('previousTrack')}>
             <Image
               style={styles.playerControlButton}
               source={require("./images/previous.png")}
@@ -77,7 +77,7 @@ function Player(props) {
                 <Image style={styles.playerControlButtonPlay} source={displayPlayPause ? require("./images/pause.png") : require("./images/play.png")} />
               </TouchableOpacity>
           }
-          <TouchableOpacity onPress={() => manageTrack('nextTrack')}>
+          <TouchableOpacity onPress={() => checkForAdvert('nextTrack')}>
             <Image style={styles.playerControlButton} source={require("./images/next.png")} />
           </TouchableOpacity>
         </View>
